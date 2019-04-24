@@ -1,14 +1,11 @@
 const fs = require('fs');
-
 const chalk = require('chalk');
-
-const getNotes = () => 'Your notes...';
 
 const addNote = (title, body) => {
   const notes = loadNotes();
-  const isDuplicateTitle = checkNoteExist(notes, title);
 
-  if (isDuplicateTitle) {
+  const isDuplicate = notes.find(note => note.title === title);
+  if (!!isDuplicate) {
     // console.log(chalk.rgb(0, 0, 0).bgRed('A note with that title already exists!'));
     console.log(chalk.red.inverse('A note with that title already exists!'));
     return;
@@ -34,9 +31,26 @@ const removeNote = title => {
   }
 };
 
-const checkNoteExist = (notes, title) => {
-  const noteExist = notes.filter(note => note.title === title);
-  return !!noteExist.length;
+const listNotes = () => {
+  const notes = loadNotes();
+  console.log(chalk.rgb(255, 165, 0).bold('Your notes'));
+
+  notes.forEach(note => {
+    console.log(note.title);
+  });
+};
+
+const readNote = title => {
+  const notes = loadNotes();
+  const note = notes.find(note => note.title === title);
+  if (note) {
+    console.log(chalk.green.inverse(note.title));
+    console.log(note.body);
+  } else {
+    console.log(
+      chalk.red.bold(`A note with a title of "${title}" does not exist!`)
+    );
+  }
 };
 
 const saveNotes = (notes = []) => {
@@ -54,9 +68,10 @@ const loadNotes = () => {
 };
 
 module.exports = {
-  getNotes,
   addNote,
-  removeNote
+  removeNote,
+  listNotes,
+  readNote
 };
 
 /**
